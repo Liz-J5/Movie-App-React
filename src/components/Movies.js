@@ -14,7 +14,7 @@ const Movies = () => {
   }, []);
 
   return (
-    <div>
+    <div className="movieList">
       {movieData.map((movie) => (
         <Card key={movie.id} movie={movie} />
       ))}
