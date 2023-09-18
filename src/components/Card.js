@@ -3,6 +3,8 @@ import axios from "axios";
 
 const Card = ({ movie }) => {
   const [movieGenreData, setMovieGenreData] = useState([]);
+  let coeursArray = [];
+  // const [array, setArray] = useState([]);
 
   useEffect(() => {
     axios
@@ -16,13 +18,26 @@ const Card = ({ movie }) => {
     // get the list of genre names for each movie
     let genreArray = [];
 
-    for (let index = 0; index < movieGenreData.length; index++) {
-      for (let index2 = 0; index2 < movie.genre_ids.length; index2++) {
-        if (movie.genre_ids[index2] === movieGenreData[index].id) {
-          genreArray.push(movieGenreData[index].name);
+    if (movie.genre_ids !== undefined) {
+      for (let index = 0; index < movieGenreData.length; index++) {
+        for (let index2 = 0; index2 < movie.genre_ids.length; index2++) {
+          if (movie.genre_ids[index2] === movieGenreData[index].id) {
+            genreArray.push(movieGenreData[index].name);
+          }
         }
       }
     }
+
+    let storedData;
+
+    const addStorage = () => {
+      storedData = window.localStorage.movies ? window.localStorage.movies.split(",") : [];
+
+      if (!storedData.includes(movie.id.toString())) {
+        storedData.push(movie.id.toString());
+        window.localStorage.movies = storedData;
+      }
+    };
 
     return (
       <div className="movieCard">
@@ -42,7 +57,14 @@ const Card = ({ movie }) => {
         </ul>
         <h3>Synopsis</h3>
         <p>{movie.overview}</p>
-        <button type="button">Ajouter aux coups de coeur</button>
+        <button
+          type="button"
+          onClick={() => {
+            addStorage();
+          }}
+        >
+          Ajouter aux coups de coeur
+        </button>
       </div>
     );
   }
