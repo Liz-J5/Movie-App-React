@@ -3,8 +3,6 @@ import axios from "axios";
 
 const Card = ({ movie }) => {
   const [movieGenreData, setMovieGenreData] = useState([]);
-  let coeursArray = [];
-  // const [array, setArray] = useState([]);
 
   useEffect(() => {
     axios
@@ -29,15 +27,27 @@ const Card = ({ movie }) => {
     }
 
     let storedData;
-
     const addStorage = () => {
       storedData = window.localStorage.movies ? window.localStorage.movies.split(",") : [];
 
       if (!storedData.includes(movie.id.toString())) {
-        storedData.push(movie.id.toString());
+        storedData.push(movie.id);
+        window.localStorage.movies = storedData.toString();
+      }
+    };
+
+    let index;
+    const removeStorage = () => {
+      storedData = window.localStorage.movies ? window.localStorage.movies.split(",") : [];
+      console.log(storedData);
+      if (storedData.includes(movie.id.toString())) {
+        index = storedData.indexOf(movie.id.toString());
+        storedData.splice(index, 1).toString();
         window.localStorage.movies = storedData;
       }
     };
+
+    // let movieId = test.find((element) => element == movie.id);
 
     return (
       <div className="movieCard">
@@ -57,6 +67,7 @@ const Card = ({ movie }) => {
         </ul>
         <h3>Synopsis</h3>
         <p>{movie.overview}</p>
+
         <button
           type="button"
           onClick={() => {
@@ -64,6 +75,15 @@ const Card = ({ movie }) => {
           }}
         >
           Ajouter aux coups de coeur
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            removeStorage();
+          }}
+        >
+          Supprimer des coups de coeur
         </button>
       </div>
     );
