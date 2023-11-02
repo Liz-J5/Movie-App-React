@@ -1,14 +1,68 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import Navigation from "../components/Navigation";
-import Movies from "../components/Movies";
-import Search from "../components/Search";
+import Card from "../components/Card";
 
 const Home = () => {
+  const [movieData, setMovieData] = useState([]);
+  const [searchValue, setSearchValue] = useState();
+  const [sortOrder, setSortOrder] = useState();
+
+  useEffect(() => {
+    axios
+      .get(
+        "https://api.themoviedb.org/3/search/movie?api_key=4d27c7ec90a5e3ee4d34208989344060&query=code&language=fr-FR"
+      )
+      .then((res) => setMovieData(res.data.results));
+  }, []);
+
+  // console.log(movieData[0].vote_average);
+
   return (
     <div>
       <Navigation />
-      <Search />
-      <Movies />
+
+      <div className="search">
+        <input
+          id="input"
+          type="text"
+          placeholder="Type here"
+          onKeyDown={(e) => {
+            if (e.code === "Enter") setSearchValue(e.target.value);
+          }}
+        />
+        <button onClick={() => setSearchValue(document.getElementById("input").value)}>
+          Rechercher
+        </button>
+        <button
+          onClick={() => {
+            setSearchValue("");
+            document.getElementById("input").value = "";
+          }}
+        >
+          Effacer
+        </button>
+      </div>
+
+      <button onClick={() => setSortOrder("<")}>Top</button>
+      <button onClick={() => setSortOrder(">")}>Flop</button>
+
+      <br />
+      <br />
+      {searchValue && <span>Resultats de la recherche:</span>}
+
+      <div className="movieList">
+        {movieData
+          .filter((movie) =>
+            searchValue ? movie.title.toLowerCase().includes(searchValue) : movie
+          )
+          .sort((movie1, movie2) => {
+            return movie1.vote_average - movie2.vote_average > 0 ? 1 : -1;
+          })
+          .map((movie) => (
+            <Card key={movie.id} movie={movie} />
+          ))}
+      </div>
     </div>
   );
 };

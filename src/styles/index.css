@@ -35,3 +35,11 @@ img {
   border-radius: 20px;
   flex-grow: 1;
 }
+
+a {
+  text-decoration: none;
+}
+
+.search {
+  text-align: center;
+}
