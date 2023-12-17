@@ -16,8 +16,6 @@ const Home = () => {
       .then((res) => setMovieData(res.data.results));
   }, []);
 
-  // console.log(movieData[0].vote_average);
-
   return (
     <div>
       <Navigation />
@@ -31,6 +29,7 @@ const Home = () => {
             if (e.code === "Enter") setSearchValue(e.target.value);
           }}
         />
+
         <button onClick={() => setSearchValue(document.getElementById("input").value)}>
           Rechercher
         </button>
@@ -44,8 +43,10 @@ const Home = () => {
         </button>
       </div>
 
-      <button onClick={() => setSortOrder("<")}>Top</button>
-      <button onClick={() => setSortOrder(">")}>Flop</button>
+      <div className="topFlop">
+        <button onClick={() => setSortOrder("Top")}>Top ↑</button>
+        <button onClick={() => setSortOrder("Flop")}>↓ Flop</button>
+      </div>
 
       <br />
       <br />
@@ -57,7 +58,11 @@ const Home = () => {
             searchValue ? movie.title.toLowerCase().includes(searchValue) : movie
           )
           .sort((movie1, movie2) => {
-            return movie1.vote_average - movie2.vote_average > 0 ? 1 : -1;
+            if (sortOrder === "Flop") {
+              return movie1.vote_average - movie2.vote_average > 0 ? 1 : -1;
+            } else if (sortOrder === "Top") {
+              return movie2.vote_average - movie1.vote_average > 0 ? 1 : -1;
+            }
           })
           .map((movie) => (
             <Card key={movie.id} movie={movie} />
